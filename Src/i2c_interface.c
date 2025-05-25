@@ -120,7 +120,7 @@ i2c_device_read(i2c_module_t* dev, uint8_t* pdata, size_t len) {
 }
 
 /**
- * \brief           Read data from I2C device (non-blocking with timeout)
+ * \brief           Read data from I2C device (non-blocking with timeout) known bug
  * \param[in]       dev: I2C module instance
  * \param[out]      pdata: Pointer to buffer to store read data
  * \param[in]       len: Number of bytes to read
