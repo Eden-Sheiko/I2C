@@ -26,8 +26,7 @@ struct i2c_module {
  * \param[in]       config: Pointer to I2C configuration
  * \return          Pointer to I2C module on success, NULL on failure
  */
-i2c_module_t*
-i2c_device_init(i2c_module_config_t* config) {
+i2c_module_t* i2c_device_init(i2c_module_config_t* config) {
     i2c_module_t* i2c_instance = NULL;
 
     if (config == NULL) {
@@ -68,8 +67,7 @@ i2c_device_init(i2c_module_config_t* config) {
  * \param[in]       len: Number of bytes to write
  * \return          I2C error code
  */
-i2c_error_t
-i2c_device_write(i2c_module_t* dev, const uint8_t* pdata, size_t len) {
+i2c_error_t i2c_device_write(i2c_module_t* dev, const uint8_t* pdata, size_t len) {
     ssize_t bytes_wr = 0;
 
     if (dev == NULL || pdata == NULL) {
@@ -97,8 +95,7 @@ i2c_device_write(i2c_module_t* dev, const uint8_t* pdata, size_t len) {
  * \param[in]       len: Number of bytes to read
  * \return          I2C error code
  */
-i2c_error_t
-i2c_device_read(i2c_module_t* dev, uint8_t* pdata, size_t len) {
+i2c_error_t i2c_device_read(i2c_module_t* dev, uint8_t* pdata, size_t len) {
     ssize_t bytes_rd = 0;
 
     if (dev == NULL || pdata == NULL) {
@@ -127,8 +124,7 @@ i2c_device_read(i2c_module_t* dev, uint8_t* pdata, size_t len) {
  * \param[in]       timeout: Timeout in milliseconds
  * \return          I2C error code
  */
-i2c_error_t
-i2c_device_read_non_blk(i2c_module_t* dev, uint8_t* pdata, size_t len, uint16_t timeout) {
+i2c_error_t i2c_device_read_non_blk(i2c_module_t* dev, uint8_t* pdata, size_t len, uint16_t timeout) {
     struct pollfd fds;
     ssize_t bytes_rd = 0;
     int ret;
@@ -179,8 +175,7 @@ i2c_device_read_non_blk(i2c_module_t* dev, uint8_t* pdata, size_t len, uint16_t 
  * \param[in]       dev: I2C module instance
  * \return          I2C error code
  */
-i2c_error_t
-i2c_device_destroy(i2c_module_t* dev) {
+i2c_error_t i2c_device_destroy(i2c_module_t* dev) {
     if (dev == NULL) {
         return I2C_NULL_ERROR;
     }

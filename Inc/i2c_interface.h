@@ -30,7 +30,7 @@ typedef struct i2c_module i2c_module_t;
 /**
  * \brief           I2C module configuration structure
  */
-typedef struct {
+typedef struct i2c_module_config {
     size_t             speed;          /*!< Bus speed in Hz */
     uint8_t            addr;           /*!< 7-bit I2C device address */
     char*              file_path;      /*!< Path to I2C device file (e.g. "/dev/i2c-1") */
@@ -39,7 +39,7 @@ typedef struct {
 /**
  * \brief           I2C error codes
  */
-typedef enum {
+typedef enum i2c_error {
     I2C_OK = 0,             /*!< Operation successful */
     I2C_BUSY,               /*!< I2C device busy */
     I2C_ERROR,              /*!< General error */
