@@ -6,7 +6,6 @@
 #include "../Inc/i2c_interface.h"
 #include "../Inc/log.h"
 #include <string.h>     /* For strerror */
-#include <poll.h>       /* For poll */
 #include <fcntl.h>      /* For open */
 #include <unistd.h>     /* For close, read, write */
 #include <errno.h>      /* For errno */
@@ -15,7 +14,6 @@
  * \brief           I2C module structure definition
  */
 struct i2c_module {
-    size_t             speed;          /*!< Bus speed in Hz */
     uint8_t            addr;           /*!< I2C slave address */
     char*              file_path;      /*!< I2C device file path */
     int                fd;             /*!< File descriptor */
@@ -30,41 +28,49 @@ i2c_module_t* i2c_device_init(i2c_module_config_t* config) {
     i2c_module_t* i2c_instance = NULL;
 
     if (config == NULL) {
-        return NULL;
+        goto err;
     }
 
     i2c_instance = calloc(1, sizeof(i2c_module_t));
     if (i2c_instance == NULL) {
-        return NULL;
+        goto err;
     }
 
-    i2c_instance->speed = config->speed;
     i2c_instance->addr = config->addr;
     i2c_instance->file_path = config->file_path;
 
-    
 
     i2c_instance->fd = open(i2c_instance->file_path, O_RDWR);
     if (i2c_instance->fd < 0) {
         if (config->verbose) {
-           LOG_ERROR("I2C open failed %d", i2c_instance->fd);
+            LOG_ERROR("I2C open failed %d", i2c_instance->fd);
         }
-        free(i2c_instance);
-        return NULL;
+        goto err_clean;
     }
 
     if (ioctl(i2c_instance->fd, I2C_SLAVE, i2c_instance->addr) < 0) {
         if (config->verbose ) {
             LOG_ERROR("I2C ioctl failed %d", i2c_instance->fd);
         }
+        goto err_close_fd;
+    }
+
+    if (config->verbose) {
+        LOG_INFO("I2C setup successful");
+      }
+
+    err_clean:
+        free(i2c_instance);
+        return NULL;
+
+    err_close_fd:
         close(i2c_instance->fd);
         free(i2c_instance);
         return NULL;
-    }
 
-     if (config->verbose) {
-            LOG_INFO("I2C setup successful");
-        }
+    err:
+        return NULL;
+
     return i2c_instance;
 }
 
@@ -84,12 +90,16 @@ i2c_error_t i2c_device_write(i2c_module_t* dev, const uint8_t* pdata, size_t len
 
     bytes_wr = write(dev->fd, pdata, len);
     if (bytes_wr < 0) {
-        LOG_ERROR("Failed to write to I2C");
+        if (config->verbose) {
+            LOG_ERROR("Failed to write to I2C");
+        }
         return I2C_ERROR;
     }
 
     if ((size_t)bytes_wr != len) {
-        LOG_WARN("Partial I2C write: expected %zu, wrote %zd", len, bytes_wr);
+        if (config->verbose) {
+            LOG_WARN("Partial I2C write: expected %zu, wrote %zd", len, bytes_wr);
+        }
         return I2C_ERROR;
     }
 
@@ -112,12 +122,16 @@ i2c_error_t i2c_device_read(i2c_module_t* dev, uint8_t* pdata, size_t len) {
 
     bytes_rd = read(dev->fd, pdata, len);
     if (bytes_rd < 0) {
-        LOG_ERROR("Failed to read from I2C");
+        if (config->verbose) {
+            LOG_ERROR("Failed to read from I2C");
+        }
         return I2C_ERROR;
     }
 
     if ((size_t)bytes_rd != len) {
-        LOG_WARN("Partial I2C read: expected %zu, got %zd", len, bytes_rd);
+        if (config->verbose) {
+            LOG_WARN("Partial I2C read: expected %zu, got %zd", len, bytes_rd);
+        }
         return I2C_ERROR;
     }
 
@@ -139,4 +153,12 @@ i2c_error_t i2c_device_destroy(i2c_module_t* dev) {
     free(dev);
 
     return I2C_OK;
+}
+
+
+i2c_error_t i2c_device_set_file_path(char* file_path, i2c_module_config_t* config){
+    if (config == NULL || file_path == NULL){
+        return I2C_NULL_ERROR;
+    }
+    
 }

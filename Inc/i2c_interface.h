@@ -35,7 +35,6 @@ typedef struct i2c_module i2c_module_t;
  * \brief           I2C module configuration structure
  */
 typedef struct i2c_module_config {
-    size_t             speed;          /*!< Bus speed in Hz */
     uint8_t            addr;           /*!< 7-bit I2C device address */
     char*              file_path;      /*!< Path to I2C device file (e.g. "/dev/i2c-1") */
     bool               thread_safe;    /*!< Enable locking   */
@@ -86,15 +85,13 @@ i2c_error_t i2c_device_write(i2c_module_t* dev, const uint8_t* pdata, size_t len
  */
 i2c_error_t i2c_device_destroy(i2c_module_t* dev);
 
-i2c_error_t i2c_device_set_speed();
+i2c_error_t i2c_device_set_file_path(char* file_path, i2c_module_config_t* config);
 
-i2c_error_t i2c_device_set_file_path();
+i2c_error_t i2c_device_set_addr(i2c_module_config_t* config);
 
-i2c_error_t i2c_device_set_addr();
+i2c_error_t i2c_device_toggle_log(i2c_module_config_t* config);
 
-i2c_error_t i2c_device_toggle_log();
-
-i2c_error_t i2c_device_thread_safe();
+i2c_error_t i2c_device_toggle_thread_safe(i2c_module_config_t* config);
 
 
 

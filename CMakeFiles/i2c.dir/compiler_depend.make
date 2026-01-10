@@ -104,10 +104,7 @@ CMakeFiles/i2c.dir/Src/i2c_interface.c.o: Src/i2c_interface.c \
   /usr/include/asm-generic/ioctl.h \
   /usr/include/x86_64-linux-gnu/bits/ioctl-types.h \
   /usr/include/x86_64-linux-gnu/sys/ttydefaults.h \
-  Inc/log.h \
-  /usr/include/poll.h \
-  /usr/include/x86_64-linux-gnu/sys/poll.h \
-  /usr/include/x86_64-linux-gnu/bits/poll.h
+  Inc/log.h
 
 CMakeFiles/i2c.dir/main.c.o: main.c \
   /usr/include/stdc-predef.h \
@@ -215,10 +212,6 @@ CMakeFiles/i2c.dir/main.c.o: main.c \
   Inc/log.h
 
 
-/usr/include/x86_64-linux-gnu/bits/poll.h:
-
-/usr/include/x86_64-linux-gnu/sys/poll.h:
-
 /usr/include/asm-generic/ioctls.h:
 
 /usr/include/x86_64-linux-gnu/asm/ioctls.h:
@@ -270,8 +263,6 @@ CMakeFiles/i2c.dir/main.c.o: main.c \
 /usr/include/errno.h:
 
 /usr/include/strings.h:
-
-/usr/include/poll.h:
 
 /usr/include/x86_64-linux-gnu/asm/ioctl.h:
 

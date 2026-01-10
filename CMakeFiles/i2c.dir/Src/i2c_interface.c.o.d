@@ -87,6 +87,4 @@ CMakeFiles/i2c.dir/Src/i2c_interface.c.o: \
  /usr/include/asm-generic/ioctl.h \
  /usr/include/x86_64-linux-gnu/bits/ioctl-types.h \
  /usr/include/x86_64-linux-gnu/sys/ttydefaults.h \
- /mnt/c/Users/edens/OneDrive/Documents/i2c/I2C/Src/../Inc/log.h \
- /usr/include/poll.h /usr/include/x86_64-linux-gnu/sys/poll.h \
- /usr/include/x86_64-linux-gnu/bits/poll.h
+ /mnt/c/Users/edens/OneDrive/Documents/i2c/I2C/Src/../Inc/log.h

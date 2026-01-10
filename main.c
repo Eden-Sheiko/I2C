@@ -5,9 +5,10 @@ int main(void){
     printf("start program testing \n");
     uint8_t data = 0xff;
     i2c_module_config_t cfg = {
-        .speed = 100000, /* need to check how to see the speed */
         .addr =  0x10,
-        .file_path = "/dev/i2c-2"
+        .file_path = "/dev/i2c-2",
+        .thread_safe = 0,
+        .verbose = 1
     };
     i2c_module_t* i2c = i2c_device_init(&cfg);
     if (i2c == NULL) {
