@@ -42,21 +42,29 @@ i2c_module_t* i2c_device_init(i2c_module_config_t* config) {
     i2c_instance->addr = config->addr;
     i2c_instance->file_path = config->file_path;
 
+    
+
     i2c_instance->fd = open(i2c_instance->file_path, O_RDWR);
     if (i2c_instance->fd < 0) {
-        LOG_ERROR("I2C open failed %d", i2c_instance->fd);
+        if (config->verbose) {
+           LOG_ERROR("I2C open failed %d", i2c_instance->fd);
+        }
         free(i2c_instance);
         return NULL;
     }
 
     if (ioctl(i2c_instance->fd, I2C_SLAVE, i2c_instance->addr) < 0) {
-        LOG_ERROR("I2C ioctl failed %d", i2c_instance->fd);
+        if (config->verbose ) {
+            LOG_ERROR("I2C ioctl failed %d", i2c_instance->fd);
+        }
         close(i2c_instance->fd);
         free(i2c_instance);
         return NULL;
     }
 
-    LOG_INFO("I2C setup successful");
+     if (config->verbose) {
+            LOG_INFO("I2C setup successful");
+        }
     return i2c_instance;
 }
 

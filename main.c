@@ -16,10 +16,7 @@ int main(void){
     if (i2c_device_write(i2c, &data, 1) != I2C_OK) {
         printf("we have an error\n");
     }
-    /* need to check */
-    if (i2c_device_read_non_blk(i2c, &data, 1, 2000 )) {
-        printf("we have an error 2\n");
-    }
+  
 
     i2c_device_destroy(i2c);
     return 0;

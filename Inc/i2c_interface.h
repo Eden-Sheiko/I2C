@@ -4,14 +4,18 @@
  * \author         Eden Sheiko
  */
 
+#if !defined(__linux__)
+    #error "Linux is NOT detected. Run the module with a Linux system."
+#endif
+
 #ifndef I2C_INTERFACE_H
 #define I2C_INTERFACE_H
 
 #include <stdio.h>
+#include <stdbool.h>
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
-#include <poll.h>
 #include <errno.h>
 #include <fcntl.h>
 #include <unistd.h>
@@ -34,6 +38,8 @@ typedef struct i2c_module_config {
     size_t             speed;          /*!< Bus speed in Hz */
     uint8_t            addr;           /*!< 7-bit I2C device address */
     char*              file_path;      /*!< Path to I2C device file (e.g. "/dev/i2c-1") */
+    bool               thread_safe;    /*!< Enable locking   */
+    bool               verbose;        /*!< Enable Logging   */
 } i2c_module_config_t;
 
 /**
@@ -79,6 +85,20 @@ i2c_error_t i2c_device_write(i2c_module_t* dev, const uint8_t* pdata, size_t len
  * \return          I2C error code
  */
 i2c_error_t i2c_device_destroy(i2c_module_t* dev);
+
+i2c_error_t i2c_device_set_speed();
+
+i2c_error_t i2c_device_set_file_path();
+
+i2c_error_t i2c_device_set_addr();
+
+i2c_error_t i2c_device_toggle_log();
+
+i2c_error_t i2c_device_thread_safe();
+
+
+
+
 
 #ifdef __cplusplus
 }

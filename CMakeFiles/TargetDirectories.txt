@@ -1,0 +1,3 @@
+/mnt/c/Users/edens/OneDrive/Documents/i2c/I2C/CMakeFiles/i2c.dir
+/mnt/c/Users/edens/OneDrive/Documents/i2c/I2C/CMakeFiles/edit_cache.dir
+/mnt/c/Users/edens/OneDrive/Documents/i2c/I2C/CMakeFiles/rebuild_cache.dir
