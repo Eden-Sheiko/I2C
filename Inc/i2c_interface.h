@@ -85,7 +85,7 @@ i2c_error_t i2c_device_write(i2c_module_t* dev, const uint8_t* pdata, size_t len
  */
 i2c_error_t i2c_device_destroy(i2c_module_t* dev);
 
-i2c_error_t i2c_device_set_file_path(char* file_path, i2c_module_config_t* config);
+i2c_error_t i2c_device_set_file_path(char* file_path, i2c_module_t* dev){
 
 i2c_error_t i2c_device_set_addr(i2c_module_config_t* config);
 

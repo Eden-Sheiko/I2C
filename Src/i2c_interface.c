@@ -156,9 +156,13 @@ i2c_error_t i2c_device_destroy(i2c_module_t* dev) {
 }
 
 
-i2c_error_t i2c_device_set_file_path(char* file_path, i2c_module_config_t* config){
-    if (config == NULL || file_path == NULL){
+i2c_error_t i2c_device_set_file_path(char* file_path, i2c_module_t* dev){
+    if (file_path == NULL || dev == NULL){
         return I2C_NULL_ERROR;
     }
-    
+    strncpy(dev->fd, file_path, sizeof(file_path));
+    if (config->verbose) {
+        LOG_INFO("I2C file path changed successful to %s \n", file_path);
+    }
+    return I2C_OK
 }
