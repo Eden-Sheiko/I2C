@@ -116,59 +116,6 @@ i2c_error_t i2c_device_read(i2c_module_t* dev, uint8_t* pdata, size_t len) {
     return I2C_OK;
 }
 
-/**
- * \brief           Read data from I2C device (non-blocking with timeout) known bug
- * \param[in]       dev: I2C module instance
- * \param[out]      pdata: Pointer to buffer to store read data
- * \param[in]       len: Number of bytes to read
- * \param[in]       timeout: Timeout in milliseconds
- * \return          I2C error code
- */
-i2c_error_t i2c_device_read_non_blk(i2c_module_t* dev, uint8_t* pdata, size_t len, uint16_t timeout) {
-    struct pollfd fds;
-    ssize_t bytes_rd = 0;
-    int ret;
-
-    if (dev == NULL || pdata == NULL) {
-        return I2C_NULL_ERROR;
-    }
-
-    if (timeout > UINT16_MAX) {
-        return INVALID_ARG;
-    }
-
-    fds.fd = dev->fd;
-    fds.events = POLLIN;
-
-    ret = poll(&fds, 1, timeout);
-    if (ret < 0) {
-        LOG_ERROR("poll() failed: %s", strerror(errno));
-        return I2C_ERROR;
-    }
-
-    if (ret == 0) {
-        LOG_WARN("poll() timeout after %u ms", timeout);
-        return I2C_TIMEOUT_ERROR;
-    }
-
-    if (fds.revents & POLLIN) {
-        bytes_rd = read(dev->fd, pdata, len);
-        if (bytes_rd < 0) {
-            LOG_ERROR("read() failed: %s", strerror(errno));
-            return I2C_ERROR;
-        }
-
-        if ((size_t)bytes_rd != len) {
-            LOG_WARN("Partial read: expected %zu, got %zd", len, bytes_rd);
-            return I2C_ERROR;
-        }
-
-        return I2C_OK;
-    }
-
-    LOG_ERROR("Unexpected poll result: revents=0x%x", fds.revents);
-    return I2C_ERROR;
-}
 
 /**
  * \brief           Destroy I2C module and free resources

@@ -65,16 +65,6 @@ i2c_module_t* i2c_device_init(i2c_module_config_t* config);
 i2c_error_t i2c_device_read(i2c_module_t* dev, uint8_t* pdata, size_t len);
 
 /**
- * \brief           Read data from I2C device with timeout (non-blocking)
- * \param[in]       dev: Pointer to initialized I2C module
- * \param[out]      pdata: Pointer to buffer to store data
- * \param[in]       len: Number of bytes to read
- * \param[in]       timeout: Timeout in milliseconds
- * \return          I2C error code
- */
-i2c_error_t i2c_device_read_non_blk(i2c_module_t* dev, uint8_t* pdata, size_t len, uint16_t timeout);
-
-/**
  * \brief           Write data to I2C device
  * \param[in]       dev: Pointer to initialized I2C module
  * \param[in]       pdata: Pointer to data to write
