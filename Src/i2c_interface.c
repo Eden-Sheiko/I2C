@@ -166,3 +166,9 @@ i2c_error_t i2c_device_set_file_path(char* file_path, i2c_module_t* dev){
     }
     return I2C_OK
 }
+
+i2c_error_t i2c_device_set_addr(uint8_t addr, i2c_module_t* dev){
+    if (file_path == NULL || dev == NULL){
+        return I2C_NULL_ERROR;
+    }
+}
