@@ -3,11 +3,7 @@
 
 #include <stdint.h>
 
-#define LOGGER      uint8_t(1)
-#define THREADSAFE  uint8_t(0)
+#define LOGGER      1
+#define THREADSAFE  0
 
-
-
-
-
-#endif
+#endif /* I2C_CONFIG_H */

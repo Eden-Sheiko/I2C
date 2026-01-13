@@ -42,20 +42,20 @@ i2c_module_t* i2c_device_init(i2c_module_config_t* config) {
 
     i2c_instance->fd = open(i2c_instance->file_path, O_RDWR);
     if (i2c_instance->fd < 0) {
-        if (config->verbose) {
+        if (LOGGER) {
             LOG_ERROR("I2C open failed %d", i2c_instance->fd);
         }
         goto err_clean;
     }
 
     if (ioctl(i2c_instance->fd, I2C_SLAVE, i2c_instance->addr) < 0) {
-        if (config->verbose ) {
+        if (LOGGER) {
             LOG_ERROR("I2C ioctl failed %d", i2c_instance->fd);
         }
         goto err_close_fd;
     }
 
-    if (config->verbose) {
+    if (LOGGER) {
         LOG_INFO("I2C setup successful");
       }
 
@@ -90,14 +90,14 @@ i2c_error_t i2c_device_write(i2c_module_t* dev, const uint8_t* pdata, size_t len
 
     bytes_wr = write(dev->fd, pdata, len);
     if (bytes_wr < 0) {
-        if (config->verbose) {
+        if (LOGGER) {
             LOG_ERROR("Failed to write to I2C");
         }
         return I2C_ERROR;
     }
 
     if ((size_t)bytes_wr != len) {
-        if (config->verbose) {
+        if (LOGGER) {
             LOG_WARN("Partial I2C write: expected %zu, wrote %zd", len, bytes_wr);
         }
         return I2C_ERROR;
@@ -122,14 +122,14 @@ i2c_error_t i2c_device_read(i2c_module_t* dev, uint8_t* pdata, size_t len) {
 
     bytes_rd = read(dev->fd, pdata, len);
     if (bytes_rd < 0) {
-        if (config->verbose) {
+        if (LOGGER) {
             LOG_ERROR("Failed to read from I2C");
         }
         return I2C_ERROR;
     }
 
     if ((size_t)bytes_rd != len) {
-        if (config->verbose) {
+        if (LOGGER) {
             LOG_WARN("Partial I2C read: expected %zu, got %zd", len, bytes_rd);
         }
         return I2C_ERROR;
@@ -161,14 +161,19 @@ i2c_error_t i2c_device_set_file_path(char* file_path, i2c_module_t* dev){
         return I2C_NULL_ERROR;
     }
     strncpy(dev->fd, file_path, sizeof(file_path));
-    if (config->verbose) {
+    if (LOGGER) {
         LOG_INFO("I2C file path changed successful to %s \n", file_path);
     }
-    return I2C_OK
+    return I2C_OK;
 }
 
 i2c_error_t i2c_device_set_addr(uint8_t addr, i2c_module_t* dev){
-    if (file_path == NULL || dev == NULL){
+    if (addr >= INT8_MAX || dev == NULL){
         return I2C_NULL_ERROR;
     }
+    dev->addr = addr;
+    if (  ) {
+        LOG_INFO("I2C addr changed successful to %u \n", dev->addr);
+    }
+    return I2C_OK;
 }

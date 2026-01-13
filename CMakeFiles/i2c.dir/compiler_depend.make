@@ -104,6 +104,7 @@ CMakeFiles/i2c.dir/Src/i2c_interface.c.o: Src/i2c_interface.c \
   /usr/include/asm-generic/ioctl.h \
   /usr/include/x86_64-linux-gnu/bits/ioctl-types.h \
   /usr/include/x86_64-linux-gnu/sys/ttydefaults.h \
+  Inc/Config.h \
   Inc/log.h
 
 CMakeFiles/i2c.dir/main.c.o: main.c \
@@ -209,6 +210,7 @@ CMakeFiles/i2c.dir/main.c.o: main.c \
   /usr/include/asm-generic/ioctl.h \
   /usr/include/x86_64-linux-gnu/bits/ioctl-types.h \
   /usr/include/x86_64-linux-gnu/sys/ttydefaults.h \
+  Inc/Config.h \
   Inc/log.h
 
 
@@ -245,6 +247,8 @@ CMakeFiles/i2c.dir/main.c.o: main.c \
 /usr/include/unistd.h:
 
 /usr/include/x86_64-linux-gnu/bits/struct_stat.h:
+
+Inc/Config.h:
 
 /usr/include/x86_64-linux-gnu/bits/fcntl-linux.h:
 
