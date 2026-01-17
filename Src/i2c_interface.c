@@ -172,7 +172,7 @@ i2c_error_t i2c_device_set_addr(uint8_t addr, i2c_module_t* dev){
         return I2C_NULL_ERROR;
     }
     dev->addr = addr;
-    if (  ) {
+    if (LOGGER) {
         LOG_INFO("I2C addr changed successful to %u \n", dev->addr);
     }
     return I2C_OK;
