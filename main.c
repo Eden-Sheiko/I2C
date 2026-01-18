@@ -15,6 +15,12 @@ int main(void){
     if (i2c_device_write(i2c, &data, 1) != I2C_OK) {
         printf("we have an error\n");
     }
+    
+    i2c_device_set_addr(0x22, i2c);
+
+    if (i2c_device_write(i2c, &data, 1) != I2C_OK) {
+        printf("we have an error\n");
+    }
   
 
     i2c_device_destroy(i2c);

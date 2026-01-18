@@ -52,9 +52,9 @@ typedef enum i2c_error {
     I2C_ERROR,              /*!< General error */
     I2C_TIMEOUT_ERROR,      /*!< Timeout occurred */
     I2C_NULL_ERROR,         /*!< Null pointer provided */
-    INVALID_ARG,             /*!< Invalid argument */
-    I2C_LOCK_FAILED,
-    I2C_UNLOCK_FAILED
+    INVALID_ARG,            /*!< Invalid argument */
+    I2C_LOCK_FAILED,        /*!< Fail to Lock */
+    I2C_UNLOCK_FAILED       /*!< Fail to UnLock */
 } i2c_error_t;
 
 /**
