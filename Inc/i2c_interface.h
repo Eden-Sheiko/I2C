@@ -21,7 +21,10 @@
 #include <unistd.h>
 #include <linux/i2c-dev.h>
 #include <sys/ioctl.h>
-#include "Config.h"
+#include <pthread.h>
+#include "i2c_config.h"
+#include "i2c_config.h"
+
 
 #ifdef __cplusplus
 extern "C" {
@@ -38,8 +41,6 @@ typedef struct i2c_module i2c_module_t;
 typedef struct i2c_module_config {
     uint8_t            addr;           /*!< 7-bit I2C device address */
     char*              file_path;      /*!< Path to I2C device file (e.g. "/dev/i2c-1") */
-    bool               thread_safe;    /*!< Enable locking   */
-    bool               verbose;        /*!< Enable Logging   */
 } i2c_module_config_t;
 
 /**
@@ -51,7 +52,9 @@ typedef enum i2c_error {
     I2C_ERROR,              /*!< General error */
     I2C_TIMEOUT_ERROR,      /*!< Timeout occurred */
     I2C_NULL_ERROR,         /*!< Null pointer provided */
-    INVALID_ARG             /*!< Invalid argument */
+    INVALID_ARG,             /*!< Invalid argument */
+    I2C_LOCK_FAILED,
+    I2C_UNLOCK_FAILED
 } i2c_error_t;
 
 /**
@@ -89,12 +92,6 @@ i2c_error_t i2c_device_destroy(i2c_module_t* dev);
 i2c_error_t i2c_device_set_file_path(char* file_path, i2c_module_t* dev);
 
 i2c_error_t i2c_device_set_addr(uint8_t addr, i2c_module_t* dev);
-
-//i2c_error_t i2c_device_toggle_log(i2c_module_config_t* config);
-
-//i2c_error_t i2c_device_toggle_thread_safe(i2c_module_config_t* config);
-
-
 
 
 

@@ -104,8 +104,21 @@ CMakeFiles/i2c.dir/Src/i2c_interface.c.o: Src/i2c_interface.c \
   /usr/include/asm-generic/ioctl.h \
   /usr/include/x86_64-linux-gnu/bits/ioctl-types.h \
   /usr/include/x86_64-linux-gnu/sys/ttydefaults.h \
-  Inc/Config.h \
-  Inc/log.h
+  /usr/include/pthread.h \
+  /usr/include/sched.h \
+  /usr/include/x86_64-linux-gnu/bits/sched.h \
+  /usr/include/x86_64-linux-gnu/bits/types/struct_sched_param.h \
+  /usr/include/x86_64-linux-gnu/bits/cpu-set.h \
+  /usr/include/time.h \
+  /usr/include/x86_64-linux-gnu/bits/time.h \
+  /usr/include/x86_64-linux-gnu/bits/types/struct_tm.h \
+  /usr/include/x86_64-linux-gnu/bits/types/struct_itimerspec.h \
+  /usr/include/x86_64-linux-gnu/bits/setjmp.h \
+  /usr/include/x86_64-linux-gnu/bits/types/struct___jmp_buf_tag.h \
+  /usr/include/x86_64-linux-gnu/bits/pthread_stack_min-dynamic.h \
+  /usr/include/x86_64-linux-gnu/bits/pthread_stack_min.h \
+  Inc/i2c_config.h \
+  Inc/i2c_log.h
 
 CMakeFiles/i2c.dir/main.c.o: main.c \
   /usr/include/stdc-predef.h \
@@ -210,9 +223,30 @@ CMakeFiles/i2c.dir/main.c.o: main.c \
   /usr/include/asm-generic/ioctl.h \
   /usr/include/x86_64-linux-gnu/bits/ioctl-types.h \
   /usr/include/x86_64-linux-gnu/sys/ttydefaults.h \
-  Inc/Config.h \
-  Inc/log.h
+  /usr/include/pthread.h \
+  /usr/include/sched.h \
+  /usr/include/x86_64-linux-gnu/bits/sched.h \
+  /usr/include/x86_64-linux-gnu/bits/types/struct_sched_param.h \
+  /usr/include/x86_64-linux-gnu/bits/cpu-set.h \
+  /usr/include/time.h \
+  /usr/include/x86_64-linux-gnu/bits/time.h \
+  /usr/include/x86_64-linux-gnu/bits/types/struct_tm.h \
+  /usr/include/x86_64-linux-gnu/bits/types/struct_itimerspec.h \
+  /usr/include/x86_64-linux-gnu/bits/setjmp.h \
+  /usr/include/x86_64-linux-gnu/bits/types/struct___jmp_buf_tag.h \
+  /usr/include/x86_64-linux-gnu/bits/pthread_stack_min-dynamic.h \
+  /usr/include/x86_64-linux-gnu/bits/pthread_stack_min.h \
+  Inc/i2c_config.h \
+  Inc/i2c_log.h
 
+
+/usr/include/x86_64-linux-gnu/bits/setjmp.h:
+
+/usr/include/time.h:
+
+/usr/include/x86_64-linux-gnu/bits/types/struct_sched_param.h:
+
+/usr/include/x86_64-linux-gnu/bits/sched.h:
 
 /usr/include/asm-generic/ioctls.h:
 
@@ -220,7 +254,11 @@ CMakeFiles/i2c.dir/main.c.o: main.c \
 
 /usr/include/x86_64-linux-gnu/bits/ioctls.h:
 
+/usr/include/x86_64-linux-gnu/bits/time.h:
+
 /usr/include/x86_64-linux-gnu/sys/ioctl.h:
+
+/usr/include/x86_64-linux-gnu/bits/cpu-set.h:
 
 /usr/include/x86_64-linux-gnu/asm/posix_types_64.h:
 
@@ -231,6 +269,8 @@ CMakeFiles/i2c.dir/main.c.o: main.c \
 /usr/include/linux/posix_types.h:
 
 /usr/include/x86_64-linux-gnu/asm/bitsperlong.h:
+
+/usr/include/pthread.h:
 
 /usr/include/asm-generic/types.h:
 
@@ -247,8 +287,6 @@ CMakeFiles/i2c.dir/main.c.o: main.c \
 /usr/include/unistd.h:
 
 /usr/include/x86_64-linux-gnu/bits/struct_stat.h:
-
-Inc/Config.h:
 
 /usr/include/x86_64-linux-gnu/bits/fcntl-linux.h:
 
@@ -283,6 +321,8 @@ Inc/Config.h:
 /usr/include/asm-generic/bitsperlong.h:
 
 /usr/include/x86_64-linux-gnu/gnu/stubs.h:
+
+/usr/include/x86_64-linux-gnu/bits/types/struct_tm.h:
 
 /usr/include/linux/types.h:
 
@@ -320,6 +360,8 @@ Inc/Config.h:
 
 /usr/include/x86_64-linux-gnu/bits/thread-shared-types.h:
 
+/usr/include/x86_64-linux-gnu/bits/types/struct_itimerspec.h:
+
 /usr/lib/gcc/x86_64-linux-gnu/11/include/stdarg.h:
 
 /usr/include/x86_64-linux-gnu/bits/getopt_core.h:
@@ -327,6 +369,8 @@ Inc/Config.h:
 /usr/include/x86_64-linux-gnu/bits/timesize.h:
 
 /usr/include/stdint.h:
+
+Inc/i2c_config.h:
 
 /usr/include/x86_64-linux-gnu/sys/ttydefaults.h:
 
@@ -358,6 +402,8 @@ main.c:
 
 /usr/include/stdc-predef.h:
 
+/usr/include/x86_64-linux-gnu/bits/types/struct___jmp_buf_tag.h:
+
 /usr/include/x86_64-linux-gnu/bits/types/clockid_t.h:
 
 /usr/include/x86_64-linux-gnu/bits/time64.h:
@@ -366,11 +412,15 @@ main.c:
 
 /usr/include/x86_64-linux-gnu/bits/libc-header-start.h:
 
+/usr/include/sched.h:
+
 /usr/lib/gcc/x86_64-linux-gnu/11/include/stdbool.h:
 
 /usr/include/x86_64-linux-gnu/bits/wordsize.h:
 
 /usr/include/stdlib.h:
+
+/usr/include/x86_64-linux-gnu/bits/pthread_stack_min-dynamic.h:
 
 /usr/include/features-time64.h:
 
@@ -386,13 +436,13 @@ Src/i2c_interface.c:
 
 /usr/include/x86_64-linux-gnu/bits/types/timer_t.h:
 
-Inc/log.h:
-
 /usr/include/x86_64-linux-gnu/bits/struct_mutex.h:
 
 /usr/include/string.h:
 
 /usr/include/x86_64-linux-gnu/bits/endian.h:
+
+Inc/i2c_log.h:
 
 /usr/include/x86_64-linux-gnu/bits/environments.h:
 
@@ -405,6 +455,8 @@ Inc/log.h:
 /usr/include/x86_64-linux-gnu/bits/byteswap.h:
 
 /usr/include/x86_64-linux-gnu/bits/types/__sigset_t.h:
+
+/usr/include/x86_64-linux-gnu/bits/pthread_stack_min.h:
 
 /usr/include/x86_64-linux-gnu/bits/types/__fpos64_t.h:
 

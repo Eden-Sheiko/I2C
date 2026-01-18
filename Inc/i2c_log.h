@@ -1,10 +1,10 @@
 /**
-* \file           log.h
+* \file            log.h
  * \brief          Simple logging macros for stderr output
  */
 
-#ifndef LOG_H
-#define LOG_H
+#ifndef I2C_LOG_H
+#define I2C_LOG_H
 
 #include <stdio.h>
 
@@ -37,4 +37,4 @@ extern "C" {
 }
 #endif
 
-#endif /* LOG_H */
+#endif /* I2C_LOG_H */

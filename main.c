@@ -1,5 +1,5 @@
 #include "Inc/i2c_interface.h"
-#include "Inc/log.h"
+#include "Inc/i2c_log.h"
 
 int main(void){
     printf("start program testing \n");
@@ -7,8 +7,6 @@ int main(void){
     i2c_module_config_t cfg = {
         .addr =  0x10,
         .file_path = "/dev/i2c-2",
-        .thread_safe = 0,
-        .verbose = 1
     };
     i2c_module_t* i2c = i2c_device_init(&cfg);
     if (i2c == NULL) {

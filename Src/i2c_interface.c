@@ -4,7 +4,7 @@
  */
 
 #include "../Inc/i2c_interface.h"
-#include "../Inc/log.h"
+#include "../Inc/i2c_log.h"
 #include <string.h>     /* For strerror */
 #include <fcntl.h>      /* For open */
 #include <unistd.h>     /* For close, read, write */
@@ -16,7 +16,8 @@
 struct i2c_module {
     uint8_t            addr;           /*!< I2C slave address */
     char*              file_path;      /*!< I2C device file path */
-    int                fd;             /*!< File descriptor */
+    int                fd;             /*!< File descriptor */ 
+    pthread_mutex_t    mutex;          /*!< Lock */
 };
 
 /**
@@ -38,7 +39,11 @@ i2c_module_t* i2c_device_init(i2c_module_config_t* config) {
 
     i2c_instance->addr = config->addr;
     i2c_instance->file_path = config->file_path;
-
+    if (THREADSAFE){
+        if (pthread_mutex_init(&i2c_instance->mutex, NULL) != 0) {
+            goto err_clean;
+        }
+    }
 
     i2c_instance->fd = open(i2c_instance->file_path, O_RDWR);
     if (i2c_instance->fd < 0) {
@@ -55,9 +60,6 @@ i2c_module_t* i2c_device_init(i2c_module_config_t* config) {
         goto err_close_fd;
     }
 
-    if (LOGGER) {
-        LOG_INFO("I2C setup successful");
-      }
 
     err_clean:
         free(i2c_instance);
@@ -65,11 +67,18 @@ i2c_module_t* i2c_device_init(i2c_module_config_t* config) {
 
     err_close_fd:
         close(i2c_instance->fd);
+        if (THREADSAFE){
+            pthread_mutex_destroy(&i2c_instance->mutex);
+        }
         free(i2c_instance);
         return NULL;
 
     err:
         return NULL;
+
+    if (LOGGER) {
+        LOG_INFO("I2C setup successful");
+    }
 
     return i2c_instance;
 }
@@ -150,8 +159,12 @@ i2c_error_t i2c_device_destroy(i2c_module_t* dev) {
     }
 
     close(dev->fd);
+    if (THREADSAFE) {
+        if (pthread_mutex_destroy(&dev->mutex) != 0){
+            return I2C_ERROR;
+        }
+    }
     free(dev);
-
     return I2C_OK;
 }
 

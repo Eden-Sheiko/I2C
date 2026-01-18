@@ -86,6 +86,16 @@ CMakeFiles/i2c.dir/Src/i2c_interface.c.o: \
  /usr/include/x86_64-linux-gnu/asm/ioctl.h \
  /usr/include/asm-generic/ioctl.h \
  /usr/include/x86_64-linux-gnu/bits/ioctl-types.h \
- /usr/include/x86_64-linux-gnu/sys/ttydefaults.h \
- /mnt/c/Users/edens/OneDrive/Documents/i2c/I2C/Src/../Inc/Config.h \
- /mnt/c/Users/edens/OneDrive/Documents/i2c/I2C/Src/../Inc/log.h
+ /usr/include/x86_64-linux-gnu/sys/ttydefaults.h /usr/include/pthread.h \
+ /usr/include/sched.h /usr/include/x86_64-linux-gnu/bits/sched.h \
+ /usr/include/x86_64-linux-gnu/bits/types/struct_sched_param.h \
+ /usr/include/x86_64-linux-gnu/bits/cpu-set.h /usr/include/time.h \
+ /usr/include/x86_64-linux-gnu/bits/time.h \
+ /usr/include/x86_64-linux-gnu/bits/types/struct_tm.h \
+ /usr/include/x86_64-linux-gnu/bits/types/struct_itimerspec.h \
+ /usr/include/x86_64-linux-gnu/bits/setjmp.h \
+ /usr/include/x86_64-linux-gnu/bits/types/struct___jmp_buf_tag.h \
+ /usr/include/x86_64-linux-gnu/bits/pthread_stack_min-dynamic.h \
+ /usr/include/x86_64-linux-gnu/bits/pthread_stack_min.h \
+ /mnt/c/Users/edens/OneDrive/Documents/i2c/I2C/Src/../Inc/i2c_config.h \
+ /mnt/c/Users/edens/OneDrive/Documents/i2c/I2C/Src/../Inc/i2c_log.h
