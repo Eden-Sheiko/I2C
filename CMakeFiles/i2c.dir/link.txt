@@ -1,1 +1,0 @@
-/usr/bin/cc CMakeFiles/i2c.dir/main.c.o CMakeFiles/i2c.dir/Src/i2c_interface.c.o -o i2c 
