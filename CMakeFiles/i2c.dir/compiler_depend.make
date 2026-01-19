@@ -117,7 +117,6 @@ CMakeFiles/i2c.dir/Src/i2c_interface.c.o: Src/i2c_interface.c \
   /usr/include/x86_64-linux-gnu/bits/types/struct___jmp_buf_tag.h \
   /usr/include/x86_64-linux-gnu/bits/pthread_stack_min-dynamic.h \
   /usr/include/x86_64-linux-gnu/bits/pthread_stack_min.h \
-  Inc/i2c_config.h \
   Inc/i2c_log.h
 
 CMakeFiles/i2c.dir/main.c.o: main.c \
@@ -236,7 +235,6 @@ CMakeFiles/i2c.dir/main.c.o: main.c \
   /usr/include/x86_64-linux-gnu/bits/types/struct___jmp_buf_tag.h \
   /usr/include/x86_64-linux-gnu/bits/pthread_stack_min-dynamic.h \
   /usr/include/x86_64-linux-gnu/bits/pthread_stack_min.h \
-  Inc/i2c_config.h \
   Inc/i2c_log.h
 
 
@@ -369,8 +367,6 @@ CMakeFiles/i2c.dir/main.c.o: main.c \
 /usr/include/x86_64-linux-gnu/bits/timesize.h:
 
 /usr/include/stdint.h:
-
-Inc/i2c_config.h:
 
 /usr/include/x86_64-linux-gnu/sys/ttydefaults.h:
 

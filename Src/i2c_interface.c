@@ -17,6 +17,8 @@ struct i2c_module {
     uint8_t            addr;           /*!< I2C slave address */
     char*              file_path;      /*!< I2C device file path */
     int                fd;             /*!< File descriptor */ 
+    bool               ctx_log;        /*!< logger */  
+    bool               ctx_safe;       /*!< mutex */  
     pthread_mutex_t    mutex;          /*!< Lock */
 };
 
@@ -39,22 +41,25 @@ i2c_module_t* i2c_device_init(i2c_module_config_t* config) {
 
     i2c_instance->addr = config->addr;
     i2c_instance->file_path = config->file_path;
-    if (THREADSAFE){
+    i2c_instance->ctx_log = config->file_path;
+    i2c_instance->ctx_safe = config->locking;
+
+    if (i2c_instance->ctx_safe) {
         if (pthread_mutex_init(&i2c_instance->mutex, NULL) != 0) {
             goto err_clean;
         }
     }
-
+    
     i2c_instance->fd = open(i2c_instance->file_path, O_RDWR);
     if (i2c_instance->fd < 0) {
-        if (LOGGER) {
+        if (i2c_instance->ctx_log) {
             LOG_ERROR("I2C open failed %d", i2c_instance->fd);
         }
         goto err_clean;
     }
 
     if (ioctl(i2c_instance->fd, I2C_SLAVE, i2c_instance->addr) < 0) {
-        if (LOGGER) {
+        if (i2c_instance->ctx_log) {
             LOG_ERROR("I2C ioctl failed %d", i2c_instance->fd);
         }
         goto err_close_fd;
@@ -67,8 +72,10 @@ i2c_module_t* i2c_device_init(i2c_module_config_t* config) {
 
     err_close_fd:
         close(i2c_instance->fd);
-        if (THREADSAFE){
-            pthread_mutex_destroy(&i2c_instance->mutex);
+        if (i2c_instance->ctx_safe) {
+            if (pthread_mutex_destroy(&i2c_instance->mutex) != 0){
+            return I2C_ERROR;
+        }
         }
         free(i2c_instance);
         return NULL;
@@ -76,7 +83,7 @@ i2c_module_t* i2c_device_init(i2c_module_config_t* config) {
     err:
         return NULL;
 
-    if (LOGGER) {
+    if (i2c_instance->ctx_log) {
         LOG_INFO("I2C setup successful");
     }
 
@@ -99,14 +106,14 @@ i2c_error_t i2c_device_write(i2c_module_t* dev, const uint8_t* pdata, size_t len
 
     bytes_wr = write(dev->fd, pdata, len);
     if (bytes_wr < 0) {
-        if (LOGGER) {
+        if (dev->ctx_log) {
             LOG_ERROR("Failed to write to I2C");
         }
         return I2C_ERROR;
     }
 
     if ((size_t)bytes_wr != len) {
-        if (LOGGER) {
+        if (dev->ctx_log) {
             LOG_WARN("Partial I2C write: expected %zu, wrote %zd", len, bytes_wr);
         }
         return I2C_ERROR;
@@ -131,14 +138,14 @@ i2c_error_t i2c_device_read(i2c_module_t* dev, uint8_t* pdata, size_t len) {
 
     bytes_rd = read(dev->fd, pdata, len);
     if (bytes_rd < 0) {
-        if (LOGGER) {
+        if (dev->ctx_log) {
             LOG_ERROR("Failed to read from I2C");
         }
         return I2C_ERROR;
     }
 
     if ((size_t)bytes_rd != len) {
-        if (LOGGER) {
+        if (dev->ctx_log) {
             LOG_WARN("Partial I2C read: expected %zu, got %zd", len, bytes_rd);
         }
         return I2C_ERROR;
@@ -159,7 +166,7 @@ i2c_error_t i2c_device_destroy(i2c_module_t* dev) {
     }
 
     close(dev->fd);
-    if (THREADSAFE) {
+    if (dev->ctx_safe) {
         if (pthread_mutex_destroy(&dev->mutex) != 0){
             return I2C_ERROR;
         }
@@ -174,7 +181,7 @@ i2c_error_t i2c_device_set_file_path(char* file_path, i2c_module_t* dev){
         return I2C_NULL_ERROR;
     }
     strncpy(dev->fd, file_path, sizeof(file_path));
-    if (LOGGER) {
+    if (dev->ctx_log) {
         LOG_INFO("I2C file path changed successful to %s \n", file_path);
     }
     return I2C_OK;
@@ -185,8 +192,29 @@ i2c_error_t i2c_device_set_addr(uint8_t addr, i2c_module_t* dev){
         return I2C_NULL_ERROR;
     }
     dev->addr = addr;
-    if (LOGGER) {
+    if (dev->ctx_log) {
         LOG_INFO("I2C addr changed successful to %u \n", dev->addr);
     }
     return I2C_OK;
 }
+
+i2c_error_t i2c_device_toggle_lock(bool ctx, i2c_module_t* dev) {
+    if (dev == NULL){
+        return I2C_NULL_ERROR;
+    }
+    dev->ctx_safe = ctx;
+    if (dev->ctx_log) {
+        LOG_INFO("lock set to : %d \n", dev->ctx_safe);
+    }
+    return I2C_OK;
+}
+
+i2c_error_t i2c_device_toggle_logger(bool ctx, i2c_module_t* dev) {
+    if (dev == NULL){
+        return I2C_NULL_ERROR;
+    }
+    dev->ctx_log = ctx;
+    LOG_INFO("log set to : %d \n",  dev->ctx_log);
+    return I2C_OK;
+}
+

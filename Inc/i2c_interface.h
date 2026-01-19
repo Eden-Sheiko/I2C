@@ -22,8 +22,7 @@
 #include <linux/i2c-dev.h>
 #include <sys/ioctl.h>
 #include <pthread.h>
-#include "i2c_config.h"
-#include "i2c_config.h"
+
 
 
 #ifdef __cplusplus
@@ -41,6 +40,8 @@ typedef struct i2c_module i2c_module_t;
 typedef struct i2c_module_config {
     uint8_t            addr;           /*!< 7-bit I2C device address */
     char*              file_path;      /*!< Path to I2C device file (e.g. "/dev/i2c-1") */
+    bool               debug;          /*!< Debug logger */
+    bool               locking;        /*!< locking option */
 } i2c_module_config_t;
 
 /**
@@ -93,6 +94,9 @@ i2c_error_t i2c_device_set_file_path(char* file_path, i2c_module_t* dev);
 
 i2c_error_t i2c_device_set_addr(uint8_t addr, i2c_module_t* dev);
 
+i2c_error_t i2c_device_toggle_lock(bool ctx, i2c_module_t* dev);
+
+i2c_error_t i2c_device_toggle_logger(bool ctx, i2c_module_t* dev);
 
 
 #ifdef __cplusplus

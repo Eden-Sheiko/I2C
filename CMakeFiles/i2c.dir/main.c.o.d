@@ -97,5 +97,4 @@ CMakeFiles/i2c.dir/main.c.o: \
  /usr/include/x86_64-linux-gnu/bits/types/struct___jmp_buf_tag.h \
  /usr/include/x86_64-linux-gnu/bits/pthread_stack_min-dynamic.h \
  /usr/include/x86_64-linux-gnu/bits/pthread_stack_min.h \
- /mnt/c/Users/edens/OneDrive/Documents/i2c/I2C/Inc/i2c_config.h \
  /mnt/c/Users/edens/OneDrive/Documents/i2c/I2C/Inc/i2c_log.h
