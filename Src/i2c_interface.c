@@ -73,9 +73,9 @@ i2c_module_t* i2c_device_init(i2c_module_config_t* config) {
     err_close_fd:
         close(i2c_instance->fd);
         if (i2c_instance->ctx_safe) {
-            if (pthread_mutex_destroy(&i2c_instance->mutex) != 0){
-            return I2C_ERROR;
-        }
+            if (pthread_mutex_destroy(&i2c_instance->mutex) != 0) {
+            return NULL;
+            }
         }
         free(i2c_instance);
         return NULL;
@@ -180,7 +180,7 @@ i2c_error_t i2c_device_set_file_path(char* file_path, i2c_module_t* dev){
     if (file_path == NULL || dev == NULL){
         return I2C_NULL_ERROR;
     }
-    strncpy(dev->fd, file_path, sizeof(file_path));
+    strncpy(dev->file_path, file_path, sizeof(file_path));
     if (dev->ctx_log) {
         LOG_INFO("I2C file path changed successful to %s \n", file_path);
     }
