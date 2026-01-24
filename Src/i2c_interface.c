@@ -1,6 +1,8 @@
 /**
  * \file           i2c_interface.c
  * \brief          I2C device interface implementation
+ * \author         Eden Sheiko
+ * \var            0.9.0
  */
 
 #include "../Inc/i2c_interface.h"
@@ -41,7 +43,7 @@ i2c_module_t* i2c_device_init(i2c_module_config_t* config) {
 
     i2c_instance->addr = config->addr;
     i2c_instance->file_path = config->file_path;
-    i2c_instance->ctx_log = config->file_path;
+    i2c_instance->ctx_log = config->debug;
     i2c_instance->ctx_safe = config->locking;
 
     if (i2c_instance->ctx_safe) {
@@ -65,29 +67,32 @@ i2c_module_t* i2c_device_init(i2c_module_config_t* config) {
         goto err_close_fd;
     }
 
+    return i2c_instance;
 
+    
+    
     err_clean:
-        free(i2c_instance);
-        return NULL;
-
+    free(i2c_instance);
+    return NULL;
+    
     err_close_fd:
-        close(i2c_instance->fd);
-        if (i2c_instance->ctx_safe) {
-            if (pthread_mutex_destroy(&i2c_instance->mutex) != 0) {
+    close(i2c_instance->fd);
+    if (i2c_instance->ctx_safe) {
+        if (pthread_mutex_destroy(&i2c_instance->mutex) != 0) {
             return NULL;
-            }
         }
-        free(i2c_instance);
-        return NULL;
-
+    }
+    free(i2c_instance);
+    return NULL;
+    
     err:
-        return NULL;
-
+    return NULL;
+    
     if (i2c_instance->ctx_log) {
         LOG_INFO("I2C setup successful");
     }
-
-    return i2c_instance;
+    
+    
 }
 
 /**
@@ -168,6 +173,7 @@ i2c_error_t i2c_device_destroy(i2c_module_t* dev) {
     close(dev->fd);
     if (dev->ctx_safe) {
         if (pthread_mutex_destroy(&dev->mutex) != 0){
+            free(dev);
             return I2C_ERROR;
         }
     }

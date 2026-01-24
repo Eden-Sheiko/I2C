@@ -2,6 +2,7 @@
  * \file           i2c_interface.h
  * \brief          I2C device interface abstraction layer
  * \author         Eden Sheiko
+ * \var            0.9.0
  */
 
 #if !defined(__linux__)
