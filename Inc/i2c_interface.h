@@ -99,6 +99,8 @@ i2c_error_t i2c_device_toggle_lock(bool ctx, i2c_module_t* dev);
 
 i2c_error_t i2c_device_toggle_logger(bool ctx, i2c_module_t* dev);
 
+/* todo add register function */
+
 
 #ifdef __cplusplus
 }

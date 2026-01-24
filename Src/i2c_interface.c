@@ -67,10 +67,11 @@ i2c_module_t* i2c_device_init(i2c_module_config_t* config) {
         goto err_close_fd;
     }
 
+    if (i2c_instance->ctx_log) {
+        LOG_INFO("I2C setup successful");
+    }
     return i2c_instance;
 
-    
-    
     err_clean:
     free(i2c_instance);
     return NULL;
@@ -87,11 +88,6 @@ i2c_module_t* i2c_device_init(i2c_module_config_t* config) {
     
     err:
     return NULL;
-    
-    if (i2c_instance->ctx_log) {
-        LOG_INFO("I2C setup successful");
-    }
-    
     
 }
 
@@ -181,7 +177,7 @@ i2c_error_t i2c_device_destroy(i2c_module_t* dev) {
     return I2C_OK;
 }
 
-
+/* todo fix the error */
 i2c_error_t i2c_device_set_file_path(char* file_path, i2c_module_t* dev){
     if (file_path == NULL || dev == NULL){
         return I2C_NULL_ERROR;
@@ -193,8 +189,9 @@ i2c_error_t i2c_device_set_file_path(char* file_path, i2c_module_t* dev){
     return I2C_OK;
 }
 
+/* todo need to update the kenel driver*/
 i2c_error_t i2c_device_set_addr(uint8_t addr, i2c_module_t* dev){
-    if (addr >= INT8_MAX || dev == NULL){
+    if (addr > 0x77 || dev == NULL){
         return I2C_NULL_ERROR;
     }
     dev->addr = addr;
