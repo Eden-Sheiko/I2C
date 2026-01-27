@@ -177,47 +177,90 @@ i2c_error_t i2c_device_destroy(i2c_module_t* dev) {
     return I2C_OK;
 }
 
-/* todo fix the error */
+/**
+ * \brief           Set the filesystem path for the I2C device
+ * \note            This function handles memory allocation. The previous path in `dev`
+ * will be freed automatically.
+ * \param[in]       file_path: String containing the path (e.g., "/dev/i2c-1")
+ * \param[in,out]   dev: Pointer to I2C device handle to modify
+ * \return          \ref I2C_OK on success, member of \ref i2c_error_t otherwise
+ */
 i2c_error_t i2c_device_set_file_path(char* file_path, i2c_module_t* dev){
-    if (file_path == NULL || dev == NULL){
+    if (file_path == NULL || dev == NULL) {
         return I2C_NULL_ERROR;
     }
-    strncpy(dev->file_path, file_path, sizeof(file_path));
+    if (dev->file_path != NULL) {
+        free(dev->file_path);
+    }
+    dev->file_path = strndup(file_path, strlen(file_path));
+    if (dev->file_path == NULL) {
+        if (dev->ctx_log) {
+            LOG_ERROR("I2C file path Failed");
+        }
+        return I2C_ERROR;
+    }
     if (dev->ctx_log) {
-        LOG_INFO("I2C file path changed successful to %s \n", file_path);
+        LOG_INFO("I2C file path changed successful to %s", file_path);
     }
     return I2C_OK;
 }
 
-/* todo need to update the kenel driver*/
+/**
+ * \brief           Set the I2C slave address for the device
+ * \note            This function calls `ioctl` immediately to set the address on the
+ * open file descriptor.
+ * \param[in]       addr: The 7-bit I2C slave address (must be < \ref MAX_ADDR)
+ * \param[in,out]   dev: Pointer to I2C device handle
+ * \return          \ref I2C_OK on success, member of \ref i2c_error_t otherwise
+ */
 i2c_error_t i2c_device_set_addr(uint8_t addr, i2c_module_t* dev){
-    if (addr > 0x77 || dev == NULL){
+    if (addr > MAX_ADDR || dev == NULL){
         return I2C_NULL_ERROR;
     }
     dev->addr = addr;
+    if (ioctl(dev->fd, I2C_SLAVE, dev->addr) < 0) {
+        if (dev->ctx_log) {
+            LOG_ERROR("I2C Setting I2C failed %d", dev->fd);
+            return I2C_ERROR;
+        }
+    }
     if (dev->ctx_log) {
-        LOG_INFO("I2C addr changed successful to %u \n", dev->addr);
+        LOG_INFO("I2C addr changed successful to %u ", dev->addr);
     }
     return I2C_OK;
 }
 
-i2c_error_t i2c_device_toggle_lock(bool ctx, i2c_module_t* dev) {
-    if (dev == NULL){
-        return I2C_NULL_ERROR;
-    }
-    dev->ctx_safe = ctx;
-    if (dev->ctx_log) {
-        LOG_INFO("lock set to : %d \n", dev->ctx_safe);
-    }
-    return I2C_OK;
+/**
+ * \brief           Toggle the safety lock/mutex context (Future Feature)
+ * \note            This function is currently a placeholder.
+ * \param[in]       ctx: Set to `true` to lock, `false` to unlock
+ * \param[in,out]   dev: Pointer to I2C device handle
+ * \return          \ref I2C_OK
+ */
+__attribute__((weak)) i2c_error_t i2c_device_toggle_lock(bool ctx, i2c_module_t* dev) {
+    // if (dev == NULL){
+    //     return I2C_NULL_ERROR;
+    // }
+    // dev->ctx_safe = ctx;
+    // if (dev->ctx_log) {
+    //     LOG_INFO("lock set to : %d \n", dev->ctx_safe);
+    // }
+    // return I2C_OK;
+    return 0;
 }
 
+/**
+ * \brief           Enable or disable the internal logger context for the I2C device
+ * \param[in]       ctx: Set to `true` to enable logging, `false` to disable
+ * \param[in,out]   dev: Pointer to I2C device handle
+ * \return          \ref I2C_OK on success, member of \ref i2c_error_t otherwise
+ */
 i2c_error_t i2c_device_toggle_logger(bool ctx, i2c_module_t* dev) {
     if (dev == NULL){
         return I2C_NULL_ERROR;
     }
     dev->ctx_log = ctx;
-    LOG_INFO("log set to : %d \n",  dev->ctx_log);
+    LOG_INFO("log set to : %d",  dev->ctx_log);
     return I2C_OK;
 }
 

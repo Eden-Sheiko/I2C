@@ -30,6 +30,8 @@
 extern "C" {
 #endif
 
+#define             MAX_ADDR 0x7F
+
 /**
  * \brief           Forward declaration of I2C module structure
  */
@@ -91,12 +93,41 @@ i2c_error_t i2c_device_write(i2c_module_t* dev, const uint8_t* pdata, size_t len
  */
 i2c_error_t i2c_device_destroy(i2c_module_t* dev);
 
+/**
+ * \brief           Set the filesystem path for the I2C device
+ * \note            This function handles memory allocation. The previous path in `dev`
+ * will be freed automatically.
+ * \param[in]       file_path: String containing the path (e.g., "/dev/i2c-1")
+ * \param[in,out]   dev: Pointer to I2C device handle to modify
+ * \return          \ref I2C_OK on success, member of \ref i2c_error_t otherwise
+ */
 i2c_error_t i2c_device_set_file_path(char* file_path, i2c_module_t* dev);
 
+/**
+ * \brief           Set the I2C slave address for the device
+ * \note            This function calls `ioctl` immediately to set the address on the
+ * open file descriptor.
+ * \param[in]       addr: The 7-bit I2C slave address (must be < \ref MAX_ADDR)
+ * \param[in,out]   dev: Pointer to I2C device handle
+ * \return          \ref I2C_OK on success, member of \ref i2c_error_t otherwise
+ */
 i2c_error_t i2c_device_set_addr(uint8_t addr, i2c_module_t* dev);
 
+/**
+ * \brief           Toggle the safety lock/mutex context (Future Feature)
+ * \note            This function is currently a placeholder.
+ * \param[in]       ctx: Set to `true` to lock, `false` to unlock
+ * \param[in,out]   dev: Pointer to I2C device handle
+ * \return          \ref I2C_OK
+ */
 i2c_error_t i2c_device_toggle_lock(bool ctx, i2c_module_t* dev);
 
+/**
+ * \brief           Enable or disable the internal logger context for the I2C device
+ * \param[in]       ctx: Set to `true` to enable logging, `false` to disable
+ * \param[in,out]   dev: Pointer to I2C device handle
+ * \return          \ref I2C_OK on success, member of \ref i2c_error_t otherwise
+ */
 i2c_error_t i2c_device_toggle_logger(bool ctx, i2c_module_t* dev);
 
 /* todo add register function */
