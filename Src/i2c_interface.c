@@ -46,12 +46,7 @@ i2c_module_t* i2c_device_init(i2c_module_config_t* config) {
     i2c_instance->ctx_log = config->debug;
     i2c_instance->ctx_safe = config->locking;
 
-    if (i2c_instance->ctx_safe) {
-        if (pthread_mutex_init(&i2c_instance->mutex, NULL) != 0) {
-            goto err_clean;
-        }
-    }
-    
+
     i2c_instance->fd = open(i2c_instance->file_path, O_RDWR);
     if (i2c_instance->fd < 0) {
         if (i2c_instance->ctx_log) {
@@ -167,12 +162,6 @@ i2c_error_t i2c_device_destroy(i2c_module_t* dev) {
     }
 
     close(dev->fd);
-    if (dev->ctx_safe) {
-        if (pthread_mutex_destroy(&dev->mutex) != 0){
-            free(dev);
-            return I2C_ERROR;
-        }
-    }
     free(dev);
     return I2C_OK;
 }

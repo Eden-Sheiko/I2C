@@ -1,6 +1,8 @@
 /**
-* \file            log.h
+ * \file           i2c_log.h
  * \brief          Simple logging macros for stderr output
+ * \author         Eden Sheiko
+ * \var            0.9.0
  */
 
 #ifndef I2C_LOG_H
