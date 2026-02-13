@@ -130,8 +130,15 @@ i2c_error_t i2c_device_toggle_lock(bool ctx, i2c_module_t* dev);
  */
 i2c_error_t i2c_device_toggle_logger(bool ctx, i2c_module_t* dev);
 
-/* todo add register function */
-
+/**
+* \brief           Write data to a specific register of an I2C device
+* \param[in,out]   dev: Pointer to I2C device handle
+* \param[in]       reg: The internal register address to write to
+* \param[in]       pdata: Pointer to the data buffer to write
+* \param[in]       len: Number of bytes to write
+* \return          \ref I2C_OK on success, member of \ref i2c_error_t otherwise
+*/
+i2c_error_t i2c_device_reg_write(i2c_module_t* dev, uint8_t reg, const uint8_t* pdata, size_t len);
 
 #ifdef __cplusplus
 }

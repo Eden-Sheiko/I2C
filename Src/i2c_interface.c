@@ -253,3 +253,42 @@ i2c_error_t i2c_device_toggle_logger(bool ctx, i2c_module_t* dev) {
     return I2C_OK;
 }
 
+/**
+* \brief           Write data to a specific register of an I2C device
+* \param[in,out]   dev: Pointer to I2C device handle
+* \param[in]       reg: The internal register address to write to
+* \param[in]       pdata: Pointer to the data buffer to write
+* \param[in]       len: Number of bytes to write
+* \return          \ref I2C_OK on success, member of \ref i2c_error_t otherwise
+*/
+i2c_error_t i2c_device_reg_write(i2c_module_t* dev, uint8_t reg, const uint8_t* pdata, size_t len) {
+    ssize_t bytes_wr = 0;
+    size_t new_len = len + 1;
+
+    if (dev == NULL || pdata == NULL) {
+        return I2C_NULL_ERROR;
+    }
+
+    uint8_t buffer[4096]  = {  0  };
+    buffer[0] = reg;
+    memcpy(buffer + 1, pdata, len);
+
+
+    bytes_wr = write(dev->fd, buffer, new_len);
+    if (bytes_wr < 0) {
+        if (dev->ctx_log) {
+            LOG_ERROR("Failed to write to I2C");
+        }
+        return I2C_ERROR;
+    }
+
+    if ((size_t)bytes_wr != new_len) {
+        if (dev->ctx_log) {
+            LOG_WARN("Partial I2C write: expected %zu, wrote %zd", new_len, bytes_wr);
+        }
+        return I2C_ERROR;
+    }
+
+    return I2C_OK;
+
+}
