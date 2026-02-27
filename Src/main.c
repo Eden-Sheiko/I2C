@@ -19,6 +19,9 @@ int main(void){
     }
 
 
+
+
+
     i2c_device_destroy(i2c);
     return 0;
 

@@ -31,6 +31,7 @@ extern "C" {
 #endif
 
 #define             MAX_ADDR 0x7F
+#define             MAX_BUFF 4096           /* 4096 Byte */
 
 /**
  * \brief           Forward declaration of I2C module structure
@@ -57,6 +58,7 @@ typedef enum i2c_error {
     I2C_TIMEOUT_ERROR,      /*!< Timeout occurred */
     I2C_NULL_ERROR,         /*!< Null pointer provided */
     INVALID_ARG,            /*!< Invalid argument */
+    I2C_OVERFLOW,           /*!< Buffer overflow */
     I2C_LOCK_FAILED,        /*!< Fail to Lock */
     I2C_UNLOCK_FAILED       /*!< Fail to UnLock */
 } i2c_error_t;

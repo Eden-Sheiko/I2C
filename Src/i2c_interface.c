@@ -269,7 +269,11 @@ i2c_error_t i2c_device_reg_write(i2c_module_t* dev, uint8_t reg, const uint8_t* 
         return I2C_NULL_ERROR;
     }
 
-    uint8_t buffer[4096]  = {  0  };
+    if (len >= MAX_BUFF) {
+
+    }
+
+    uint8_t buffer[MAX_BUFF]  = {  0  };
     buffer[0] = reg;
     memcpy(buffer + 1, pdata, len);
 
