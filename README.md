@@ -4,7 +4,7 @@ This project is licensed under the MIT License – free to use, modify, and dist
 
 MIT License
 
-Copyright (c) 2025 Eden Sheiko
+Copyright (c) 2026 Eden Sheiko
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

@@ -1,12 +1,13 @@
 /**
  * \file           i2c_interface.c
  * \brief          I2C device interface implementation
+ * \author         Eden Sheiko
+ * \var            0.9.0
  */
 
 #include "../Inc/i2c_interface.h"
-#include "../Inc/log.h"
+#include "../Inc/i2c_log.h"
 #include <string.h>     /* For strerror */
-#include <poll.h>       /* For poll */
 #include <fcntl.h>      /* For open */
 #include <unistd.h>     /* For close, read, write */
 #include <errno.h>      /* For errno */
@@ -15,10 +16,12 @@
  * \brief           I2C module structure definition
  */
 struct i2c_module {
-    size_t             speed;          /*!< Bus speed in Hz */
     uint8_t            addr;           /*!< I2C slave address */
     char*              file_path;      /*!< I2C device file path */
-    int                fd;             /*!< File descriptor */
+    int                fd;             /*!< File descriptor */ 
+    bool               ctx_log;        /*!< logger */  
+    bool               ctx_safe;       /*!< mutex */  
+    pthread_mutex_t    mutex;          /*!< Lock */
 };
 
 /**
@@ -30,34 +33,57 @@ i2c_module_t* i2c_device_init(i2c_module_config_t* config) {
     i2c_module_t* i2c_instance = NULL;
 
     if (config == NULL) {
-        return NULL;
+        goto err;
     }
 
     i2c_instance = calloc(1, sizeof(i2c_module_t));
     if (i2c_instance == NULL) {
-        return NULL;
+        goto err;
     }
 
-    i2c_instance->speed = config->speed;
     i2c_instance->addr = config->addr;
     i2c_instance->file_path = config->file_path;
+    i2c_instance->ctx_log = config->debug;
+    i2c_instance->ctx_safe = config->locking;
+
 
     i2c_instance->fd = open(i2c_instance->file_path, O_RDWR);
     if (i2c_instance->fd < 0) {
-        LOG_ERROR("I2C open failed %d", i2c_instance->fd);
-        free(i2c_instance);
-        return NULL;
+        if (i2c_instance->ctx_log) {
+            LOG_ERROR("I2C open failed %d", i2c_instance->fd);
+        }
+        goto err_clean;
     }
 
     if (ioctl(i2c_instance->fd, I2C_SLAVE, i2c_instance->addr) < 0) {
-        LOG_ERROR("I2C ioctl failed %d", i2c_instance->fd);
-        close(i2c_instance->fd);
-        free(i2c_instance);
-        return NULL;
+        if (i2c_instance->ctx_log) {
+            LOG_ERROR("I2C ioctl failed %d", i2c_instance->fd);
+        }
+        goto err_close_fd;
     }
 
-    LOG_INFO("I2C setup successful");
+    if (i2c_instance->ctx_log) {
+        LOG_INFO("I2C setup successful");
+    }
     return i2c_instance;
+
+    err_clean:
+    free(i2c_instance);
+    return NULL;
+    
+    err_close_fd:
+    close(i2c_instance->fd);
+    if (i2c_instance->ctx_safe) {
+        if (pthread_mutex_destroy(&i2c_instance->mutex) != 0) {
+            return NULL;
+        }
+    }
+    free(i2c_instance);
+    return NULL;
+    
+    err:
+    return NULL;
+    
 }
 
 /**
@@ -76,12 +102,16 @@ i2c_error_t i2c_device_write(i2c_module_t* dev, const uint8_t* pdata, size_t len
 
     bytes_wr = write(dev->fd, pdata, len);
     if (bytes_wr < 0) {
-        LOG_ERROR("Failed to write to I2C");
+        if (dev->ctx_log) {
+            LOG_ERROR("Failed to write to I2C");
+        }
         return I2C_ERROR;
     }
 
     if ((size_t)bytes_wr != len) {
-        LOG_WARN("Partial I2C write: expected %zu, wrote %zd", len, bytes_wr);
+        if (dev->ctx_log) {
+            LOG_WARN("Partial I2C write: expected %zu, wrote %zd", len, bytes_wr);
+        }
         return I2C_ERROR;
     }
 
@@ -104,71 +134,22 @@ i2c_error_t i2c_device_read(i2c_module_t* dev, uint8_t* pdata, size_t len) {
 
     bytes_rd = read(dev->fd, pdata, len);
     if (bytes_rd < 0) {
-        LOG_ERROR("Failed to read from I2C");
+        if (dev->ctx_log) {
+            LOG_ERROR("Failed to read from I2C");
+        }
         return I2C_ERROR;
     }
 
     if ((size_t)bytes_rd != len) {
-        LOG_WARN("Partial I2C read: expected %zu, got %zd", len, bytes_rd);
+        if (dev->ctx_log) {
+            LOG_WARN("Partial I2C read: expected %zu, got %zd", len, bytes_rd);
+        }
         return I2C_ERROR;
     }
 
     return I2C_OK;
 }
 
-/**
- * \brief           Read data from I2C device (non-blocking with timeout) known bug
- * \param[in]       dev: I2C module instance
- * \param[out]      pdata: Pointer to buffer to store read data
- * \param[in]       len: Number of bytes to read
- * \param[in]       timeout: Timeout in milliseconds
- * \return          I2C error code
- */
-i2c_error_t i2c_device_read_non_blk(i2c_module_t* dev, uint8_t* pdata, size_t len, uint16_t timeout) {
-    struct pollfd fds;
-    ssize_t bytes_rd = 0;
-    int ret;
-
-    if (dev == NULL || pdata == NULL) {
-        return I2C_NULL_ERROR;
-    }
-
-    if (timeout > UINT16_MAX) {
-        return INVALID_ARG;
-    }
-
-    fds.fd = dev->fd;
-    fds.events = POLLIN;
-
-    ret = poll(&fds, 1, timeout);
-    if (ret < 0) {
-        LOG_ERROR("poll() failed: %s", strerror(errno));
-        return I2C_ERROR;
-    }
-
-    if (ret == 0) {
-        LOG_WARN("poll() timeout after %u ms", timeout);
-        return I2C_TIMEOUT_ERROR;
-    }
-
-    if (fds.revents & POLLIN) {
-        bytes_rd = read(dev->fd, pdata, len);
-        if (bytes_rd < 0) {
-            LOG_ERROR("read() failed: %s", strerror(errno));
-            return I2C_ERROR;
-        }
-
-        if ((size_t)bytes_rd != len) {
-            LOG_WARN("Partial read: expected %zu, got %zd", len, bytes_rd);
-            return I2C_ERROR;
-        }
-
-        return I2C_OK;
-    }
-
-    LOG_ERROR("Unexpected poll result: revents=0x%x", fds.revents);
-    return I2C_ERROR;
-}
 
 /**
  * \brief           Destroy I2C module and free resources
@@ -182,6 +163,136 @@ i2c_error_t i2c_device_destroy(i2c_module_t* dev) {
 
     close(dev->fd);
     free(dev);
+    return I2C_OK;
+}
+
+/**
+ * \brief           Set the filesystem path for the I2C device
+ * \note            This function handles memory allocation. The previous path in `dev`
+ * will be freed automatically.
+ * \param[in]       file_path: String containing the path (e.g., "/dev/i2c-1")
+ * \param[in,out]   dev: Pointer to I2C device handle to modify
+ * \return          \ref I2C_OK on success, member of \ref i2c_error_t otherwise
+ */
+i2c_error_t i2c_device_set_file_path(char* file_path, i2c_module_t* dev){
+    if (file_path == NULL || dev == NULL) {
+        return I2C_NULL_ERROR;
+    }
+    if (dev->file_path != NULL) {
+        free(dev->file_path);
+    }
+    dev->file_path = strndup(file_path, strlen(file_path));
+    if (dev->file_path == NULL) {
+        if (dev->ctx_log) {
+            LOG_ERROR("I2C file path Failed");
+        }
+        return I2C_ERROR;
+    }
+    if (dev->ctx_log) {
+        LOG_INFO("I2C file path changed successful to %s", file_path);
+    }
+    return I2C_OK;
+}
+
+/**
+ * \brief           Set the I2C slave address for the device
+ * \note            This function calls `ioctl` immediately to set the address on the
+ * open file descriptor.
+ * \param[in]       addr: The 7-bit I2C slave address (must be < \ref MAX_ADDR)
+ * \param[in,out]   dev: Pointer to I2C device handle
+ * \return          \ref I2C_OK on success, member of \ref i2c_error_t otherwise
+ */
+i2c_error_t i2c_device_set_addr(uint8_t addr, i2c_module_t* dev){
+    if (addr > MAX_ADDR || dev == NULL){
+        return I2C_NULL_ERROR;
+    }
+    dev->addr = addr;
+    if (ioctl(dev->fd, I2C_SLAVE, dev->addr) < 0) {
+        if (dev->ctx_log) {
+            LOG_ERROR("I2C Setting I2C failed %d", dev->fd);
+            return I2C_ERROR;
+        }
+    }
+    if (dev->ctx_log) {
+        LOG_INFO("I2C addr changed successful to %u ", dev->addr);
+    }
+    return I2C_OK;
+}
+
+/**
+ * \brief           Toggle the safety lock/mutex context (Future Feature)
+ * \note            This function is currently a placeholder.
+ * \param[in]       ctx: Set to `true` to lock, `false` to unlock
+ * \param[in,out]   dev: Pointer to I2C device handle
+ * \return          \ref I2C_OK
+ */
+__attribute__((weak)) i2c_error_t i2c_device_toggle_lock(bool ctx, i2c_module_t* dev) {
+    // if (dev == NULL){
+    //     return I2C_NULL_ERROR;
+    // }
+    // dev->ctx_safe = ctx;
+    // if (dev->ctx_log) {
+    //     LOG_INFO("lock set to : %d \n", dev->ctx_safe);
+    // }
+    // return I2C_OK;
+    return 0;
+}
+
+/**
+ * \brief           Enable or disable the internal logger context for the I2C device
+ * \param[in]       ctx: Set to `true` to enable logging, `false` to disable
+ * \param[in,out]   dev: Pointer to I2C device handle
+ * \return          \ref I2C_OK on success, member of \ref i2c_error_t otherwise
+ */
+i2c_error_t i2c_device_toggle_logger(bool ctx, i2c_module_t* dev) {
+    if (dev == NULL){
+        return I2C_NULL_ERROR;
+    }
+    dev->ctx_log = ctx;
+    LOG_INFO("log set to : %d",  dev->ctx_log);
+    return I2C_OK;
+}
+
+/**
+* \brief           Write data to a specific register of an I2C device
+* \param[in,out]   dev: Pointer to I2C device handle
+* \param[in]       reg: The internal register address to write to
+* \param[in]       pdata: Pointer to the data buffer to write
+* \param[in]       len: Number of bytes to write
+* \return          \ref I2C_OK on success, member of \ref i2c_error_t otherwise
+*/
+i2c_error_t i2c_device_reg_write(i2c_module_t* dev, uint8_t reg, const uint8_t* pdata, size_t len) {
+    ssize_t bytes_wr = 0;
+    size_t new_len = len + 1;
+
+    if (dev == NULL || pdata == NULL) {
+        return I2C_NULL_ERROR;
+    }
+
+    if (len >= MAX_BUFF) {
+
+    }
+
+    uint8_t buffer[MAX_BUFF]  = {  0  };
+    buffer[0] = reg;
+    memcpy(buffer + 1, pdata, len);
+
+
+    bytes_wr = write(dev->fd, buffer, new_len);
+    if (bytes_wr < 0) {
+        if (dev->ctx_log) {
+            LOG_ERROR("Failed to write to I2C");
+        }
+        return I2C_ERROR;
+    }
+
+    if ((size_t)bytes_wr != new_len) {
+        if (dev->ctx_log) {
+            LOG_WARN("Partial I2C write: expected %zu, wrote %zd", new_len, bytes_wr);
+        }
+        return I2C_ERROR;
+    }
 
     return I2C_OK;
+
 }

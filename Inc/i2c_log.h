@@ -1,10 +1,12 @@
 /**
-* \file           log.h
- * \brief          Simple logging macros for stderr output
+ * \file           i2c_log.h
+ * \brief          Simple logging macros for stdout/stderr output
+ * \author         Eden Sheiko
+ * \var            0.9.0
  */
 
-#ifndef LOG_H
-#define LOG_H
+#ifndef I2C_LOG_H
+#define I2C_LOG_H
 
 #include <stdio.h>
 
@@ -17,14 +19,14 @@ extern "C" {
      * \param[in]       fmt: Format string (printf-style)
      * \param[in]       ...: Additional arguments
      */
-#define LOG_INFO(fmt, ...)    fprintf(stderr, "[INFO] " fmt "\n", ##__VA_ARGS__)
+#define LOG_INFO(fmt, ...)    fprintf(stdout, "[INFO] " fmt "\n", ##__VA_ARGS__)
 
     /**
      * \brief           Log warning-level message
      * \param[in]       fmt: Format string (printf-style)
      * \param[in]       ...: Additional arguments
      */
-#define LOG_WARN(fmt, ...)    fprintf(stderr, "[WARN] " fmt "\n", ##__VA_ARGS__)
+#define LOG_WARN(fmt, ...)    fprintf(stdout, "[WARN] " fmt "\n", ##__VA_ARGS__)
 
     /**
      * \brief           Log error-level message
@@ -37,4 +39,4 @@ extern "C" {
 }
 #endif
 
-#endif /* LOG_H */
+#endif /* I2C_LOG_H */
